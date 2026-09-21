@@ -1,0 +1,156 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "Hospital Self-Service Digital Check-In API",
+    "description": "API blueprint for replacing physical hospital cards with unique, 6-character alphanumeric access codes and dynamic mobile check-ins.",
+    "version": "1.0.0"
+  },
+  "paths": {
+    "/api/v1/patients/register": {
+      "post": {
+        "summary": "Register a New Patient",
+        "description": "Registers a patient in the hospital system and returns a unique, secure 6-character uppercase access code for future digital check-ins.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PatientCreate"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Patient registered successfully.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PatientRegisterResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request. Missing or invalid input data."
+          }
+        }
+      }
+    },
+    "/api/v1/appointments/create": {
+      "post": {
+        "summary": "Schedule a Patient Appointment",
+        "description": "Internal administrative route to book an appointment slot for a registered patient.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AppointmentCreate"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Appointment created successfully."
+          },
+          "404": {
+            "description": "Patient ID not found."
+          }
+        }
+      }
+    },
+    "/api/v1/checkin": {
+      "post": {
+        "summary": "Patient QR Code Self Check-In",
+        "description": "Validates the user via their Access Code and Date of Birth (2FA PIN). If an appointment exists for the current calendar date, updates status to 'Checked-In' and returns booking directions.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CheckInRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Check-in successful. Returns active appointment metadata.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CheckInSuccessResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized. Invalid Access Code or Date of Birth configuration."
+          },
+          "404": {
+            "description": "No active, scheduled appointments found for today's date."
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "PatientCreate": {
+        "type": "object",
+        "required": ["first_name", "last_name", "date_of_birth", "phone_number"],
+        "properties": {
+          "first_name": { "type": "string", "example": "Chidi" },
+          "last_name": { "type": "string", "example": "Okonkwo" },
+          "date_of_birth": { "type": "string", "format": "date", "example": "1992-05-14" },
+          "phone_number": { "type": "string", "example": "+2348012345678" }
+        }
+      },
+      "PatientRegisterResponse": {
+        "type": "object",
+        "properties": {
+          "patient_id": { "type": "string", "example": "usr_9x2k7b5" },
+          "access_code": { "type": "string", "example": "B7X9RH", "description": "The unique 6-character secure code given to the patient." },
+          "message": { "type": "string", "example": "Registration successful. Provide the access code to the patient." }
+        }
+      },
+      "AppointmentCreate": {
+        "type": "object",
+        "required": ["patient_id", "appointment_date", "appointment_time", "doctor_name", "room_number"],
+        "properties": {
+          "patient_id": { "type": "string", "example": "usr_9x2k7b5" },
+          "appointment_date": { "type": "string", "format": "date", "example": "2026-09-21" },
+          "appointment_time": { "type": "string", "example": "14:30" },
+          "doctor_name": { "type": "string", "example": "Dr. Amina Bello" },
+          "room_number": { "type": "string", "example": "Consultation Room 4" }
+        }
+      },
+      "CheckInRequest": {
+        "type": "object",
+        "required": ["access_code", "date_of_birth"],
+        "properties": {
+          "access_code": { "type": "string", "example": "B7X9RH" },
+          "date_of_birth": { "type": "string", "format": "date", "example": "1992-05-14" }
+        }
+      },
+      "CheckInSuccessResponse": {
+        "type": "object",
+        "properties": {
+          "message": { "type": "string", "example": "Check-in successful! Please proceed." },
+          "patient_name": { "type": "string", "example": "Chidi Okonkwo" },
+          "appointment_details": {
+            "type": "object",
+            "properties": {
+              "time": { "type": "string", "example": "14:30" },
+              "doctor": { "type": "string", "example": "Dr. Amina Bello" },
+              "location": { "type": "string", "example": "Consultation Room 4" },
+              "current_status": { "type": "string", "example": "Checked-In" }
+            }
+          }
+        }
+      }
+    }
+  }
+}
