@@ -7,7 +7,7 @@ const app = express();
 app.use(cors()); // 🔥 This completely stops the browser connection errors!
 app.use(express.json());
 
-const PORT = 8000;
+const PORT = process.env.PORT || 8000;
 
 // --- Load the api.json Blueprint ---
 const apiSpec = JSON.parse(fs.readFileSync(path.join(__dirname, 'api.json'), 'utf8'));
