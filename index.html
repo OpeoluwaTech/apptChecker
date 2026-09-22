@@ -1,231 +1,227 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hospital Digital Intake & Check-In Hub</title>
-    <style>
-        :root {
-            --primary: #007bff;
-            --success: #28a745;
-            --dark: #343a40;
-            --bg: #f4f6f9;
-        }
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: var(--bg); margin: 0; padding: 20px; color: var(--dark); }
-        .container { max-width: 1100px; margin: 0 auto; }
-        header { text-align: center; margin-bottom: 30px; padding-bottom: 10px; border-bottom: 2px solid #e0e0e0; }
-        header h1 { margin: 0; color: var(--dark); }
-        header p { margin: 5px 0 0; color: #6c757d; }
-        
-        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 25px; margin-bottom: 25px; }
-        @media (max-width: 768px) { .grid { grid-template-columns: 1fr; } }
-        
-        .card { background: white; padding: 25px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); border-top: 4px solid var(--primary); }
-        .card.success-theme { border-top-color: var(--success); }
-        .card.full-width { grid-column: 1 / -1; }
-        
-        h2 { margin-top: 0; margin-bottom: 20px; color: #495057; display: flex; align-items: center; gap: 10px; }
-        label { display: block; margin: 12px 0 5px; font-weight: 600; font-size: 14px; color: #495057; }
-        input, select { width: 100%; padding: 10px; box-sizing: border-box; border: 1px solid #ced4da; border-radius: 6px; font-size: 15px; background: #fff; }
-        input:focus, select:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px rgba(0,123,255,0.15); }
-        
-        button { width: 100%; color: white; border: none; padding: 12px; margin-top: 18px; border-radius: 6px; font-size: 15px; cursor: pointer; font-weight: bold; transition: background 0.2s; }
-        .btn-primary { background: var(--primary); }
-        .btn-primary:hover { background: #0056b3; }
-        .btn-success { background: var(--success); }
-        .btn-success:hover { background: #218838; }
-        
-        .alert-box { margin-top: 15px; padding: 15px; border-radius: 6px; font-size: 14px; display: none; line-height: 1.5; }
-        .alert-box.info { background: #e2f0d9; border: 1px solid #ccd1b9; color: #385723; display: block; }
-        .alert-box.error { background: #f8d7da; border: 1px solid #f5c6cb; color: #721c24; display: block; }
-        .badge { background: #e9ecef; padding: 3px 8px; border-radius: 4px; font-family: monospace; font-size: 14px; font-weight: bold; }
-        code { background: #f1f1f1; padding: 2px 6px; border-radius: 4px; font-family: monospace; font-weight: bold; color: #d9534f; }
-    </style>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Hospital Digital Intake & Check-In Hub</title>
+  <style>
+    body { font-family: system-ui, -apple-system, sans-serif; max-width: 600px; margin: 20px auto; padding: 0 20px; line-height: 1.5; }
+    .section { background: #f4f4f9; padding: 20px; border-radius: 8px; margin-bottom: 20px; border: 1px solid #ddd; }
+    .form-group { margin-bottom: 15px; }
+    label { display: block; font-weight: bold; margin-bottom: 5px; }
+    input { width: 100%; padding: 8px; box-sizing: border-box; border: 1px solid #ccc; border-radius: 4px; }
+    button { background: #0066cc; color: white; border: none; padding: 10px 15px; border-radius: 4px; cursor: pointer; font-size: 16px; width: 100%; }
+    button:hover { background: #0052a3; }
+    .alert { padding: 10px; margin-top: 10px; border-radius: 4px; font-weight: bold; display: none; }
+    .success { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+    .error { background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
+  </style>
 </head>
 <body>
 
-<div class="container">
-    <header>
-        <h1>🏥 Hospital Intake & Check-In Portal</h1>
-        <p>Manage patients enrollment, schedule medical visits, and execute self-service digital check-ins.</p>
-    </header>
+  <h1>🏥 Hospital Intake & Check-In Portal</h1>
+  <p>Manage patient enrollment, schedule medical visits, and execute self-service digital check-ins.</p>
 
-    <div class="grid">
-        <!-- SECTION 1: REGISTRATION (STAFF) -->
-        <div class="card success-theme">
-            <h2>📝 1. Receptionist: Register Patient</h2>
-            <form id="registerForm">
-                <label>First Name</label>
-                <input type="text" id="regFirst" placeholder="e.g., Tunde" required>
+  <!-- 📝 1. Receptionist: Register Patient -->
+  <div class="section">
+    <h2>📝 1. Receptionist: Register Patient</h2>
+    <form id="registerForm">
+      <div class="form-group">
+        <label>First Name</label>
+        <input type="text" id="regFirst" required placeholder="e.g., Chidi">
+      </div>
+      <div class="form-group">
+        <label>Last Name</label>
+        <input type="text" id="regLast" required placeholder="e.g., Okonkwo">
+      </div>
+      <div class="form-group">
+        <label>Date of Birth</label>
+        <input type="date" id="regDOB" required>
+      </div>
+      <div class="form-group">
+        <label>Phone Number</label>
+        <input type="tel" id="regPhone" required placeholder="e.g., +2348012345678">
+      </div>
+      <button type="submit">Enroll & Generate Access Code</button>
+    </form>
+    <div id="registerAlert" class="alert"></div>
+  </div>
 
-                <label>Last Name</label>
-                <input type="text" id="regLast" placeholder="e.g., Adebayo" required>
+  <!-- 📅 2. Administrator: Book Appointment -->
+  <div class="section">
+    <h2>📅 2. Administrator: Book Appointment</h2>
+    <form id="appointmentForm">
+      <div class="form-group">
+        <label>Target Patient Access Code</label>
+        <input type="text" id="apptCode" required placeholder="Enter the 6-character code (e.g., B7X9RH)">
+      </div>
+      <div class="form-group">
+        <label>Appointment Date</label>
+        <input type="date" id="apptDate" required>
+      </div>
+      <div class="form-group">
+        <label>Appointment Time</label>
+        <input type="time" id="apptTime" required>
+      </div>
+      <div class="form-group">
+        <label>Assigned Medical Professional</label>
+        <input type="text" id="apptDoctor" required placeholder="e.g., Dr. Amina Bello">
+      </div>
+      <div class="form-group">
+        <label>Physical Consultation Location</label>
+        <input type="text" id="apptRoom" required placeholder="e.g., Consultation Room 4">
+      </div>
+      <button type="submit">Schedule Appointment Slot</button>
+    </form>
+    <div id="appointmentAlert" class="alert"></div>
+  </div>
 
-                <label>Date of Birth</label>
-                <input type="date" id="regDob" required>
+  <!-- 📲 3. Patient Side: Mobile Self Check-In Gate -->
+  <div class="section" style="border-left: 5px solid #0066cc;">
+    <h2>📲 3. Patient Side: Mobile Self Check-In Gate</h2>
+    <p><small><em>Simulates scanning the on-site QR code layout on a smartphone.</em></small></p>
+    <form id="checkinForm">
+      <div class="form-group">
+        <label>Digital Access Code</label>
+        <input type="text" id="checkinCode" required placeholder="e.g., B7X9RH">
+      </div>
+      <div class="form-group">
+        <label>Verify Date of Birth (Security PIN)</label>
+        <input type="date" id="checkinDOB" required>
+      </div>
+      <button type="submit">Authenticate & Check In</button>
+    </form>
+    <div id="checkinAlert" class="alert"></div>
+  </div>
 
-                <label>Phone Number</label>
-                <input type="tel" id="regPhone" placeholder="e.g., +2348030000000" required>
-
-                <button type="submit" class="btn-success">Enroll & Generate Access Code</button>
-            </form>
-            <div id="regResult" class="alert-box"></div>
-        </div>
-
-        <!-- SECTION 2: APPOINTMENT SCHEDULER (STAFF) -->
-        <div class="card">
-            <h2>📅 2. Administrator: Book Appointment</h2>
-            <form id="appointmentForm">
-                <label>Target Patient ID</label>
-                <input type="text" id="apptPatientId" placeholder="e.g., usr_9x2k7b5" required>
-
-                <label>Appointment Date</label>
-                <input type="date" id="apptDate" required>
-
-                <label>Appointment Time</label>
-                <input type="time" id="apptTime" required>
-
-                <label>Assigned Medical Professional</label>
-                <input type="text" id="apptDoctor" placeholder="e.g., Dr. Amina Bello" required>
-
-                <label>Physical Consultation Location</label>
-                <input type="text" id="apptRoom" placeholder="e.g., Room 4, Wing B" required>
-
-                <button type="submit" class="btn-primary">Schedule Appointment Slot</button>
-            </form>
-            <div id="apptResult" class="alert-box"></div>
-        </div>
-
-        <!-- SECTION 3: PATIENT SELF CHECK-IN (FRONT-FACING QR DESTINATION) -->
-        <div class="card full-width">
-            <h2>📲 3. Patient Side: Mobile Self Check-In Gate</h2>
-            <p style="color: #6c757d; margin-top: -10px; font-size: 14px;">This layout simulates what the patient sees on their smartphone web browser screen after scanning the on-site QR code location.</p>
-            <form id="checkInForm" style="max-width: 500px; margin: 0 auto; padding: 20px 0;">
-                <label>Digital Access Code</label>
-                <input type="text" id="checkCode" placeholder="Enter your 6-digit code (e.g., B7X9RH)" required style="text-transform: uppercase;">
-
-                <label>Verify Date of Birth (Security PIN)</label>
-                <input type="date" id="checkDob" required>
-
-                <button type="submit" class="btn-primary" style="background: #495057;">Authenticate & Check In</button>
-            </form>
-            <div id="checkInResult" class="alert-box" style="max-width: 500px; margin: 15px auto 0;"></div>
-        </div>
-    </div>
-</div>
-</body>
-<script>
-    // Direct numerical link avoids any local network parsing issues
-    const API_BASE = "./api.json";
-
-    function showAlert(elementId, statusClass, htmlContent) {
-        const box = document.getElementById(elementId);
-        if (box) {
-            box.className = `alert-box ${statusClass}`;
-            box.innerHTML = htmlContent;
-            box.style.display = 'block';
-        }
+  <!-- 🧠 MOCK BACKEND ENGINE SCRIPT -->
+  <script>
+    // Helper function to generate a random 6-character uppercase alphanumeric access code
+    function generateAccessCode() {
+      const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+      let code = '';
+      for (let i = 0; i < 6; i++) {
+        code += chars.charAt(Math.floor(Math.random() * chars.length));
+      }
+      return code;
     }
 
-    // --- 1. REGISTRATION HANDLER ---
-    document.getElementById('registerForm').addEventListener('submit', async function(e) {
-        e.preventDefault(); // 🛑 Strictly stops the page from resetting
-        e.stopPropagation();
+    // Initialize mock database tables in localStorage if they don't exist
+    if (!localStorage.getItem('patients')) localStorage.setItem('patients', JSON.stringify({}));
+    if (!localStorage.getItem('appointments')) localStorage.setItem('appointments', JSON.stringify([]));
 
-        const payload = {
-            first_name: document.getElementById('regFirst').value.trim(),
-            last_name: document.getElementById('regLast').value.trim(),
-            date_of_birth: document.getElementById('regDob').value,
-            phone_number: document.getElementById('regPhone').value.trim()
-        };
+    function getDB() {
+      return {
+        patients: JSON.parse(localStorage.getItem('patients')),
+        appointments: JSON.parse(localStorage.getItem('appointments'))
+      };
+    }
 
-        try {
-            const response = await fetch(`${API_BASE}/patients/register`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(payload)
-            });
-            const data = await response.json();
-            
-            if (response.ok) {
-                showAlert('regResult', 'info', `
-                    <strong>🎉 Registration Successful!</strong><br>
-                    Patient ID: <code>${data.patient_id}</code><br>
-                    Access Code: <strong><code>${data.access_code}</code></strong>
-                `);
-                document.getElementById('apptPatientId').value = data.patient_id;
-            } else {
-                showAlert('regResult', 'error', `<strong>Error:</strong> ${data.detail || 'Failed to register.'}`);
-            }
-        } catch (err) {
-            showAlert('regResult', 'error', '<strong>Network Error:</strong> Cannot reach backend server. Make sure node server.js is running!');
-        }
+    function saveDB(patients, appointments) {
+      localStorage.setItem('patients', JSON.stringify(patients));
+      localStorage.setItem('appointments', JSON.stringify(appointments));
+    }
+
+    // 1. Handle Patient Registration
+    document.getElementById('registerForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+      const db = getDB();
+      const accessCode = generateAccessCode();
+      
+      const newPatient = {
+        first_name: document.getElementById('regFirst').value,
+        last_name: document.getElementById('regLast').value,
+        date_of_birth: document.getElementById('regDOB').value,
+        phone_number: document.getElementById('regPhone').value,
+        access_code: accessCode
+      };
+
+      db.patients[accessCode] = newPatient;
+      saveDB(db.patients, db.appointments);
+
+      const alertBox = document.getElementById('registerAlert');
+      alertBox.className = "alert success";
+      alertBox.style.display = "block";
+      alertBox.innerHTML = `Success! Patient registered.<br><strong>Access Code: ${accessCode}</strong> (Give this to the patient)`;
+      
+      this.reset();
     });
 
-    // --- 2. APPOINTMENT HANDLER ---
-    document.getElementById('appointmentForm').addEventListener('submit', async function(e) {
-        e.preventDefault(); // 🛑 Strictly stops the page from resetting
-        e.stopPropagation();
+    // 2. Handle Appointment Scheduling
+    document.getElementById('appointmentForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+      const db = getDB();
+      const code = document.getElementById('apptCode').value.trim().toUpperCase();
 
-        const payload = {
-            patient_id: document.getElementById('apptPatientId').value.trim(),
-            appointment_date: document.getElementById('apptDate').value,
-            appointment_time: document.getElementById('apptTime').value,
-            doctor_name: document.getElementById('apptDoctor').value.trim(),
-            room_number: document.getElementById('apptRoom').value.trim()
-        };
+      // Check if patient exists
+      if (!db.patients[code]) {
+        const alertBox = document.getElementById('appointmentAlert');
+        alertBox.className = "alert error";
+        alertBox.style.display = "block";
+        alertBox.textContent = "Error: Invalid Access Code. Patient not found.";
+        return;
+      }
 
-        try {
-            const response = await fetch(`${API_BASE}/appointments/create`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(payload)
-            });
-            const data = await response.json();
+      const newAppt = {
+        access_code: code,
+        date: document.getElementById('apptDate').value,
+        time: document.getElementById('apptTime').value,
+        doctor: document.getElementById('apptDoctor').value,
+        location: document.getElementById('apptRoom').value
+      };
 
-            if (response.ok) {
-                showAlert('apptResult', 'info', `<strong>📅 Slot Booked:</strong> ${data.message}`);
-            } else {
-                showAlert('apptResult', 'error', `<strong>Error:</strong> ${data.detail || 'Failed to book.'}`);
-            }
-        } catch (err) {
-            showAlert('apptResult', 'error', '<strong>Network Error:</strong> Server connection failed.');
-        }
+      db.appointments.push(newAppt);
+      saveDB(db.patients, db.appointments);
+
+      const alertBox = document.getElementById('appointmentAlert');
+      alertBox.className = "alert success";
+      alertBox.style.display = "block";
+      alertBox.textContent = "Appointment scheduled successfully for Patient " + code;
+      
+      this.reset();
     });
 
-    // --- 3. CHECK-IN HANDLER ---
-    document.getElementById('checkInForm').addEventListener('submit', async function(e) {
-        e.preventDefault(); // 🛑 Strictly stops the page from resetting
-        e.stopPropagation();
+    // 3. Handle Patient Self Check-In
+    document.getElementById('checkinForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+      const db = getDB();
+      const code = document.getElementById('checkinCode').value.trim().toUpperCase();
+      const dob = document.getElementById('checkinDOB').value;
+      const alertBox = document.getElementById('checkinAlert');
 
-        const payload = {
-            access_code: document.getElementById('checkCode').value.trim().toUpperCase(),
-            date_of_birth: document.getElementById('checkDob').value
-        };
+      const patient = db.patients[code];
 
-        try {
-            const response = await fetch(`${API_BASE}/checkin`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(payload)
-            });
-            const data = await response.json();
+      // 2FA Validation: Verify code exists and DOB matches
+      if (!patient || patient.date_of_birth !== dob) {
+        alertBox.className = "alert error";
+        alertBox.style.display = "block";
+        alertBox.textContent = "Access Denied: Invalid Access Code or Date of Birth configuration.";
+        return;
+      }
 
-            if (response.ok) {
-                showAlert('checkInResult', 'info', `
-                    <strong>✅ ${data.message}</strong><br><br>
-                    <strong>Patient:</strong> ${data.patient_name}<br>
-                    <strong>Time:</strong> ${data.appointment_details.time}<br>
-                    <strong>Doctor:</strong> ${data.appointment_details.doctor}<br>
-                    <strong>Room:</strong> ${data.appointment_details.location}<br>
-                    <strong>Status:</strong> <code>${data.appointment_details.current_status}</code>
-                `);
-            } else {
-                showAlert('checkInResult', 'error', `<strong>Access Denied:</strong> ${data.detail || 'Verification failed.'}`);
-            }
-        } catch (err) {
-            showAlert('checkInResult', 'error', '<strong>Network Error:</strong> Link broken or server offline.');
-        }
+      // Check for an active appointment today
+      const todayStr = new Date().toISOString().split('T')[0]; 
+      const appt = db.appointments.find(a => a.access_code === code && a.date === todayStr);
+
+      if (!appt) {
+        alertBox.className = "alert error";
+        alertBox.style.display = "block";
+        alertBox.textContent = "No active, scheduled appointments found for today's date.";
+        return;
+      }
+
+      // Success matching your response schema
+      alertBox.className = "alert success";
+      alertBox.style.display = "block";
+      alertBox.innerHTML = `
+        <strong>Check-in successful! Please proceed.</strong><br>
+        Welcome, ${patient.first_name} ${patient.last_name}<br>
+        🕐 Time: ${appt.time}<br>
+        🩺 Doctor: ${appt.doctor}<br>
+        📍 Location: ${appt.location}<br>
+        Status: <span style="color:green; font-weight:bold;">Checked-In</span>
+      `;
     });
-</script>
+  </script>
+</body>
 </html>
