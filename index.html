@@ -165,259 +165,269 @@
   <!-- 🌐 SUPABASE REAL-TIME CLOUD DATABASE ENGINE -->
   <script>
     // 1. HELPER: Generate a secure 6-character uppercase alphanumeric access code
-    function generateAccessCode() {
-      const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
-      let code = '';
-      for (let i = 0; i < 6; i++) {
-        code += chars.charAt(Math.floor(Math.random() * chars.length));
-      }
-      return code;
+function generateAccessCode() {
+  const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+  let code = '';
+  for (let i = 0; i < 6; i++) {
+    code += chars.charAt(Math.floor(Math.random() * chars.length));
+  }
+  return code;
+}
+
+// 2. CONFIGURATION: Fixed reference route endpoint structures
+const SUPABASE_REST_URL = "https://btxeeotsozchcegvgqcn.supabase.co/rest/v1/";
+const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJ0eGVlb3Rzb3pjaGNlZ3ZncWNuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTAwNzMwNjcsImV4cCI6MjEwNTY0OTA2N30.IGMpXIlmBq-3NqFhcl9VX7i3kAkhj--KJFQFjwIuuJo";
+
+// EMAILJS CONFIGURATION: Connected to your active layout templates
+const EMAILJS_PUBLIC_KEY = "V2cZStjMeH7goA3Y3";
+const EMAILJS_SERVICE_ID = "service_6mn1kg3";
+const EMAILJS_TEMPLATE_ID = "template_x0325to";
+
+emailjs.init({ publicKey: EMAILJS_PUBLIC_KEY });
+
+// Helper headers for native HTTP requests
+const getHeaders = () => ({
+  "apikey": SUPABASE_ANON_KEY,
+  "Authorization": `Bearer ${SUPABASE_ANON_KEY}`,
+  "Content-Type": "application/json",
+  "Prefer": "return=representation"
+});
+
+// Helper function to inject, start, and remove visual loading bars dynamically
+function toggleLoadingState(formId, isLoading) {
+  const form = document.getElementById(formId);
+  const existingBar = form.querySelector('.loading-bar-container');
+
+  if (isLoading) {
+    if (existingBar) existingBar.remove();
+    const container = document.createElement('div');
+    container.className = 'loading-bar-container';
+    container.style.cssText = 'width: 100%; height: 6px; background: #e0e0e0; border-radius: 3px; margin-top: 10px; overflow: hidden; position: relative;';
+    const bar = document.createElement('div');
+    bar.className = 'loading-bar-fill';
+    bar.style.cssText = 'height: 100%; width: 30%; background: #0066cc; border-radius: 3px; position: absolute; animation: loadingSwipe 1s infinite linear;';
+
+    if (!document.getElementById('loadingAnimationStyles')) {
+      const style = document.createElement('style');
+      style.id = 'loadingAnimationStyles';
+      style.innerHTML = `@keyframes loadingSwipe { 0% { left: -30%; } 100% { left: 100%; } }`;
+      document.head.appendChild(style);
     }
+    container.appendChild(bar);
+    form.appendChild(container);
+    const btn = form.querySelector('button');
+    if (btn) btn.disabled = true;
+  } else {
+    if (existingBar) existingBar.remove();
+    const btn = form.querySelector('button');
+    if (btn) btn.disabled = false;
+  }
+}
 
-    // 2. CONFIGURATION: Fixed reference route endpoint structures
-    const SUPABASE_REST_URL = "https://btxeeotsozchcegvgqcn.supabase.co/rest/v1/";
-    const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJ0eGVlb3Rzb3pjaGNlZ3ZncWNuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTAwNzMwNjcsImV4cCI6MjEwNTY0OTA2N30.IGMpXIlmBq-3NqFhcl9VX7i3kAkhj--KJFQFjwIuuJo";
+// Helper function to handle status messages that fade out automatically after 20 seconds
+function displayTemporaryAlert(alertBoxId, className, textHTML) {
+  const alertBox = document.getElementById(alertBoxId);
+  alertBox.className = "alert " + className;
+  alertBox.style.display = "block";
+  alertBox.innerHTML = textHTML;
 
-    // EMAILJS CONFIGURATION: Connected to your active layout templates
-    const EMAILJS_PUBLIC_KEY = "V2cZStjMeH7goA3Y3";
-    const EMAILJS_SERVICE_ID = "service_6mn1kg3";
-    const EMAILJS_TEMPLATE_ID = "template_x0325to";
+  if (alertBox.dataset.timeoutId) {
+    clearTimeout(Number(alertBox.dataset.timeoutId));
+  }
 
-    emailjs.init({ publicKey: "V2cZStjMeH7goA3Y3" });
+  const timeoutId = setTimeout(() => {
+    alertBox.style.display = "none";
+    alertBox.innerHTML = "";
+  }, 20000);
 
-    // Helper headers for native HTTP requests
-    const getHeaders = () => ({
-      "apikey": SUPABASE_ANON_KEY,
-      "Authorization": `Bearer ${SUPABASE_ANON_KEY}`,
-      "Content-Type": "application/json",
-      "Prefer": "return=representation"
-    });
+  alertBox.dataset.timeoutId = timeoutId;
+}
 
-    // Helper function to inject, start, and remove visual loading bars dynamically
-    function toggleLoadingState(formId, isLoading) {
-      const form = document.getElementById(formId);
-      const existingBar = form.querySelector('.loading-bar-container');
+// Helper function to instantly wipe clean a specific alert box
+function clearAlert(alertBoxId) {
+  const alertBox = document.getElementById(alertBoxId);
+  alertBox.style.display = "none";
+  alertBox.innerHTML = "";
+  if (alertBox.dataset.timeoutId) {
+    clearTimeout(Number(alertBox.dataset.timeoutId));
+  }
+}
 
-      if (isLoading) {
-        if (existingBar) existingBar.remove();
-        const container = document.createElement('div');
-        container.className = 'loading-bar-container';
-        container.style.cssText = 'width: 100%; height: 6px; background: #e0e0e0; border-radius: 3px; margin-top: 10px; overflow: hidden; position: relative;';
-        const bar = document.createElement('div');
-        bar.className = 'loading-bar-fill';
-        bar.style.cssText = 'height: 100%; width: 30%; background: #0066cc; border-radius: 3px; position: absolute; animation: loadingSwipe 1s infinite linear;';
+// 3. FUNCTION: Handle Patient Registration (With Duplicate Email Interceptor)
+document.getElementById('registerForm').addEventListener('submit', function (e) {
+  e.preventDefault();
 
-        if (!document.getElementById('loadingAnimationStyles')) {
-          const style = document.createElement('style');
-          style.id = 'loadingAnimationStyles';
-          style.innerHTML = `@keyframes loadingSwipe { 0% { left: -30%; } 100% { left: 100%; } }`;
-          document.head.appendChild(style);
-        }
-        container.appendChild(bar);
-        form.appendChild(container);
-        const btn = form.querySelector('button');
-        if (btn) btn.disabled = true;
-      } else {
-        if (existingBar) existingBar.remove();
-        const btn = form.querySelector('button');
-        if (btn) btn.disabled = false;
+  const formId = 'registerForm';
+  const alertId = 'registerAlert';
+  const accessCode = generateAccessCode();
+
+  clearAlert(alertId);
+
+  const firstName = document.getElementById('regFirst').value;
+  const lastName = document.getElementById('regLast').value;
+  const patientEmail = document.getElementById('regEmail').value.trim().toLowerCase();
+
+  const patientData = {
+    access_code: accessCode,
+    first_name: firstName,
+    last_name: lastName,
+    date_of_birth: document.getElementById('regDOB').value,
+    phone_number: document.getElementById('regPhone').value,
+    email: patientEmail // 🌟 Captures and saves the email field into Supabase database
+  };
+
+  toggleLoadingState(formId, true);
+
+  fetch(`${SUPABASE_REST_URL}/patients`, {
+    method: 'POST',
+    headers: getHeaders(),
+    body: JSON.stringify(patientData)
+  })
+    .then(response => {
+      if (!response.ok) {
+        return response.json().then(err => { 
+          // 🌟 CATCH DUPLICATE ERROR: PostgreSQL unique code check
+          if (err.code === "23505" || (err.message && err.message.includes("unique"))) {
+            throw new Error("This email address is already registered in the system.");
+          }
+          throw new Error(err.message || "Network database error occurred."); 
+        });
       }
-    }
-
-    // Helper function to handle status messages that fade out automatically after 20 seconds
-    function displayTemporaryAlert(alertBoxId, className, textHTML) {
-      const alertBox = document.getElementById(alertBoxId);
-      alertBox.className = "alert " + className;
-      alertBox.style.display = "block";
-      alertBox.innerHTML = textHTML;
-
-      if (alertBox.dataset.timeoutId) {
-        clearTimeout(Number(alertBox.dataset.timeoutId));
-      }
-
-      const timeoutId = setTimeout(() => {
-        alertBox.style.display = "none";
-        alertBox.innerHTML = "";
-      }, 20000);
-
-      alertBox.dataset.timeoutId = timeoutId;
-    }
-
-    // Helper function to instantly wipe clean a specific alert box
-    function clearAlert(alertBoxId) {
-      const alertBox = document.getElementById(alertBoxId);
-      alertBox.style.display = "none";
-      alertBox.innerHTML = "";
-      if (alertBox.dataset.timeoutId) {
-        clearTimeout(Number(alertBox.dataset.timeoutId));
-      }
-    }
-
-    // 3. FUNCTION: Handle Patient Registration (Database + Email Broadcast)
-    document.getElementById('registerForm').addEventListener('submit', function (e) {
-      e.preventDefault();
-
-      const formId = 'registerForm';
-      const alertId = 'registerAlert';
-      const accessCode = generateAccessCode();
-
-      clearAlert(alertId);
-
-      const firstName = document.getElementById('regFirst').value;
-      const lastName = document.getElementById('regLast').value;
-      const patientEmail = document.getElementById('regEmail').value;
-
-      const patientData = {
-        access_code: accessCode,
-        first_name: firstName,
-        last_name: lastName,
-        date_of_birth: document.getElementById('regDOB').value,
-        phone_number: document.getElementById('regPhone').value
+      return response.json();
+    })
+    .then(data => {
+      const emailParams = {
+        to_name: `${firstName} ${lastName}`,
+        to_email: patientEmail,
+        access_code: accessCode
       };
+      return emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, emailParams, EMAILJS_PUBLIC_KEY);
+    })
+    .then(() => {
+      toggleLoadingState(formId, false);
+      displayTemporaryAlert(alertId, "success", `Success! Patient registered and verification email sent.<br><strong>Access Code: ${accessCode}</strong>`);
+      document.getElementById(formId).reset();
+    })
+    .catch(error => {
+      toggleLoadingState(formId, false);
+      // Displays the specific "Already Registered" message nicely in a red box
+      displayTemporaryAlert(alertId, "error", "Registration Failed: " + error.message);
+      console.error(error);
+    });
+});
 
-      toggleLoadingState(formId, true);
+// 4. FUNCTION: Handle Appointment Scheduling
+document.getElementById('appointmentForm').addEventListener('submit', function(e) {
+  e.preventDefault();
 
-      fetch(`${SUPABASE_REST_URL}/patients`, {
+  const formId = 'appointmentForm';
+  const alertId = 'appointmentAlert';
+  const code = document.getElementById('apptCode').value.trim().toUpperCase();
+
+  clearAlert(alertId);
+
+  const apptData = {
+    access_code: code,
+    appointment_date: document.getElementById('apptDate').value,
+    appointment_time: document.getElementById('apptTime').value,
+    doctor_name: document.getElementById('apptDoctor').value,
+    room_number: document.getElementById('apptRoom').value
+  };
+
+  toggleLoadingState(formId, true);
+
+  fetch(`${SUPABASE_REST_URL}/patients?access_code=eq.${code}`, {
+    method: 'GET',
+    headers: getHeaders()
+  })
+    .then(res => res.json())
+    .then(patients => {
+      if (!patients || patients.length === 0) {
+        toggleLoadingState(formId, false);
+        displayTemporaryAlert(alertId, "error", "Error: Invalid Access Code. Patient not found.");
+        return;
+      }
+
+      return fetch(`${SUPABASE_REST_URL}/appointments`, {
         method: 'POST',
         headers: getHeaders(),
-        body: JSON.stringify(patientData)
-      })
-        .then(response => {
-          if (!response.ok) return response.json().then(err => { throw err; });
-          return response.json();
-        })
-        .then(data => {
-          const emailParams = {
-            to_name: `${firstName} ${lastName}`,
-            to_email: patientEmail,
-            access_code: accessCode
-          };
-          return emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, emailParams, EMAILJS_PUBLIC_KEY);
-        })
-        .then(() => {
-          toggleLoadingState(formId, false);
-          displayTemporaryAlert(alertId, "success", `Success! Patient registered and verification email sent.<br><strong>Access Code: ${accessCode}</strong>`);
-          document.getElementById(formId).reset();
-        })
-        .catch(error => {
-          toggleLoadingState(formId, false);
-          displayTemporaryAlert(alertId, "error", "Operation Failed: " + (error.text || error.message || "Network Error"));
-          console.error(error);
-        });
+        body: JSON.stringify(apptData)
+      });
+    })
+    .then(res => {
+      if (!res) return;
+      if (!res.ok) return res.json().then(err => { throw err; });
+
+      toggleLoadingState(formId, false);
+      displayTemporaryAlert(alertId, "success", "Appointment scheduled successfully for Patient " + code);
+      document.getElementById(formId).reset();
+    })
+    .catch(error => {
+      toggleLoadingState(formId, false);
+      displayTemporaryAlert(alertId, "error", "Database Connection Error: " + (error.message || "Failed to fetch"));
+      console.error(error);
     });
+});
 
-    // 4. FUNCTION: Handle Appointment Scheduling
-    document.getElementById('appointmentForm').addEventListener('submit', function (e) {
-      e.preventDefault();
+// 5. FUNCTION: Handle Patient Self Check-In
+document.getElementById('checkinForm').addEventListener('submit', function(e) {
+  e.preventDefault();
 
-      const formId = 'appointmentForm';
-      const alertId = 'appointmentAlert';
-      const code = document.getElementById('apptCode').value.trim().toUpperCase();
+  const formId = 'checkinForm';
+  const alertId = 'checkinAlert';
+  const code = document.getElementById('checkinCode').value.trim().toUpperCase();
+  const dob = document.getElementById('checkinDOB').value;
 
-      clearAlert(alertId);
+  clearAlert(alertId);
+  toggleLoadingState(formId, true);
 
-      const apptData = {
-        access_code: code,
-        appointment_date: document.getElementById('apptDate').value,
-        appointment_time: document.getElementById('apptTime').value,
-        doctor_name: document.getElementById('apptDoctor').value,
-        room_number: document.getElementById('apptRoom').value
-      };
+  fetch(`${SUPABASE_REST_URL}/patients?access_code=eq.${code}&date_of_birth=eq.${dob}`, {
+    method: 'GET',
+    headers: getHeaders()
+  })
+    .then(res => res.json())
+    .then(patients => {
+      if (!patients || patients.length === 0) {
+        toggleLoadingState(formId, false);
+        displayTemporaryAlert(alertId, "error", "Access Denied: Invalid Access Code or Date of Birth configuration.");
+        return;
+      }
 
-      toggleLoadingState(formId, true);
+      const patient = patients[0];
+      const todayStr = new Date().toLocaleDateString('en-CA');
 
-      fetch(`${SUPABASE_REST_URL}/patients?access_code=eq.${code}`, {
+      fetch(`${SUPABASE_REST_URL}/appointments?access_code=eq.${code}&appointment_date=eq.${todayStr}`, {
         method: 'GET',
         headers: getHeaders()
       })
         .then(res => res.json())
-        .then(patients => {
-          if (!patients || patients.length === 0) {
-            toggleLoadingState(formId, false);
-            displayTemporaryAlert(alertId, "error", "Error: Invalid Access Code. Patient not found.");
+        .then(appointments => {
+          toggleLoadingState(formId, false);
+          
+          if (!appointments || appointments.length === 0) {
+            displayTemporaryAlert(alertId, "error", "No active, scheduled appointments found for today's date.");
             return;
           }
 
-          return fetch(`${SUPABASE_REST_URL}/appointments`, {
-            method: 'POST',
-            headers: getHeaders(),
-            body: JSON.stringify(apptData)
-          });
-        })
-        .then(res => {
-          if (!res) return;
-          if (!res.ok) return res.json().then(err => { throw err; });
-
-          toggleLoadingState(formId, false);
-          displayTemporaryAlert(alertId, "success", "Appointment scheduled successfully for Patient " + code);
+          const appt = appointments[0];
+          const successHTML = `
+            <strong>Check-in successful! Please proceed.</strong><br>
+            Welcome, ${patient.first_name} ${patient.last_name}<br>
+            🕐 Time: ${appt.appointment_time}<br>
+            🩺 Doctor: ${appt.doctor_name}<br>
+            📍 Location: ${appt.room_number}<br>
+            Status: <span style="color:green; font-weight:bold;">Checked-In</span>
+          `;
+          displayTemporaryAlert(alertId, "success", successHTML);
           document.getElementById(formId).reset();
-        })
-        .catch(error => {
-          toggleLoadingState(formId, false);
-          displayTemporaryAlert(alertId, "error", "Database Connection Error: " + (error.message || "Failed to fetch"));
-          console.error(error);
         });
+    })
+    .catch(error => {
+      toggleLoadingState(formId, false);
+      displayTemporaryAlert(alertId, "error", "Database Connection Error: " + error.message);
+      console.error(error);
     });
-
-    // 5. FUNCTION: Handle Patient Self Check-In
-    document.getElementById('checkinForm').addEventListener('submit', function (e) {
-      e.preventDefault();
-
-      const formId = 'checkinForm';
-      const alertId = 'checkinAlert';
-      const code = document.getElementById('checkinCode').value.trim().toUpperCase();
-      const dob = document.getElementById('checkinDOB').value;
-
-      clearAlert(alertId);
-      toggleLoadingState(formId, true);
-
-      fetch(`${SUPABASE_REST_URL}/patients?access_code=eq.${code}&date_of_birth=eq.${dob}`, {
-        method: 'GET',
-        headers: getHeaders()
-      })
-        .then(res => res.json())
-        .then(patients => {
-          if (!patients || patients.length === 0) {
-            toggleLoadingState(formId, false);
-            displayTemporaryAlert(alertId, "error", "Access Denied: Invalid Access Code or Date of Birth configuration.");
-            return;
-          }
-
-          const patient = patients[0];
-          const todayStr = new Date().toLocaleDateString('en-CA');
-
-          fetch(`${SUPABASE_REST_URL}/appointments?access_code=eq.${code}&appointment_date=eq.${todayStr}`, {
-            method: 'GET',
-            headers: getHeaders()
-          })
-            .then(res => res.json())
-            .then(appointments => {
-              toggleLoadingState(formId, false);
-
-              if (!appointments || appointments.length === 0) {
-                displayTemporaryAlert(alertId, "error", "No active, scheduled appointments found for today's date.");
-                return;
-              }
-
-              const appt = appointments[0];
-              const successHTML = `
-        <strong>Check-in successful! Please proceed.</strong><br>
-        Welcome, ${patient.first_name} ${patient.last_name}<br>
-        🕐 Time: ${appt.appointment_time}<br>
-        🩺 Doctor: ${appt.doctor_name}<br>
-        📍 Location: ${appt.room_number}<br>
-        Status: <span style="color:green; font-weight:bold;">Checked-In</span>
-      `;
-              displayTemporaryAlert(alertId, "success", successHTML);
-              document.getElementById(formId).reset();
-            });
-        })
-        .catch(error => {
-          toggleLoadingState(formId, false);
-          displayTemporaryAlert(alertId, "error", "Database Connection Error: " + error.message);
-          console.error(error);
-        });
-    });
+});
 
   </script>
 </body>
